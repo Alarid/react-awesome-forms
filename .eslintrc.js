@@ -45,5 +45,6 @@ module.exports = {
       'error',
       { 'ts-expect-error': 'allow-with-description', minimumDescriptionLength: 10 },
     ],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
 }

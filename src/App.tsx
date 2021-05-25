@@ -1,17 +1,25 @@
-import React from 'react'
-import { ThemeProvider } from 'styled-components'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Home from 'sections/Home'
-import theme from 'styles/theme'
-import GlobalStyle from 'styles/globalStyle'
+import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
 
-const App: React.FC = () => {
+export default function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Home />
-    </ThemeProvider>
+    <div className="card bg-light shadow p-3 mx-auto my-5" style={{ width: '350px' }}>
+      <div className="card-body">
+        <h5 className="card-title text-center">
+          Awesome Forms
+          <span role="img" aria-label="rocket emoji">
+            🚀
+          </span>
+        </h5>
+        <Router>
+          <Switch>
+            <Route path="/" exact component={LoginForm} />
+            <Route path="/register" exact component={RegisterForm} />
+          </Switch>
+        </Router>
+      </div>
+    </div>
   )
 }
-
-export default App
