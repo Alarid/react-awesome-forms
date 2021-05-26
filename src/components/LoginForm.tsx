@@ -4,6 +4,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import cn from 'classnames'
 
+import ErrorMessage from './ErrorMessage'
+
 // Yup validation schema
 const schema = yup.object().shape({
   email: yup
@@ -67,7 +69,7 @@ export default function LoginForm() {
           {...register('email')}
         />
         {/** Render the error message related to this field (empty if no error) */}
-        <div className="invalid-feedback">{errors.email?.message}</div>
+        <ErrorMessage>{errors.email?.message}</ErrorMessage>
       </div>
 
       {/** Password */}
@@ -83,7 +85,7 @@ export default function LoginForm() {
           })}
           {...register('password')}
         />
-        <div className="invalid-feedback">{errors.password?.message}</div>
+        <ErrorMessage>{errors.password?.message}</ErrorMessage>
       </div>
 
       {/** Remember me */}

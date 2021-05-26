@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import cn from 'classnames'
+
+import ErrorMessage from './ErrorMessage'
 
 // Yup validation schema
 const schema = yup.object().shape({
@@ -28,12 +29,6 @@ type FormValues = {
   password: string
   passwordConfirm: string
   acceptLegal: boolean
-}
-
-type ErrorMessageProps = { children: React.ReactNode }
-
-function ErrorMessage({ children }: ErrorMessageProps) {
-  return <div className="invalid-feedback">{children}</div>
 }
 
 /**
