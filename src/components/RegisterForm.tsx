@@ -1,33 +1,40 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import Select, { OptionTypeBase } from 'react-select'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import cn from 'classnames'
 
-import ErrorMessage from './ErrorMessage'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 
-// Yup validation schema
+const iceCreamOptions: OptionTypeBase[] = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' },
+]
+
 const schema = yup.object().shape({
   email: yup
     .string()
     .email('This is not a valid email address')
     .required('Please fill in your email'),
-  fullName: yup.string().required('PLease fill in your full name'),
   password: yup.string().required('Please fill in your password'),
   passwordConfirm: yup
     .string()
     .oneOf([yup.ref('password')])
     .required('Passwords must match'),
+  // favoriteIceCream isn't required, so we require its value to be one of the options, or null
+  favoriteIceCream: yup.string().oneOf([...iceCreamOptions.map((option) => option.value), null]),
   acceptLegal: yup.boolean().oneOf([true], 'You must accept the Terms & Conditions'),
 })
 
 // Type definition for the form data
 type FormValues = {
   email: string
-  fullName: string
   password: string
   passwordConfirm: string
+  favoriteIceCream: OptionTypeBase
   acceptLegal: boolean
 }
 
@@ -39,6 +46,7 @@ export default function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormValues>({ resolver: yupResolver(schema) })
 
   function onSubmit(data: FormValues) {
@@ -46,83 +54,65 @@ export default function RegisterForm() {
     const { passwordConfirm, acceptLegal, ...rest } = data
     console.log(rest) // you would only send what's in rest to your backend
   }
-
-  const getClassNames = (field: keyof FormValues) =>
-    cn('form-control', { 'is-invalid': Boolean(errors[field]) })
+  console.log(errors.acceptLegal?.message)
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <Form onSubmit={handleSubmit(onSubmit)} noValidate>
       {/** Email */}
-      <div className="mb-3">
-        <label htmlFor="email" className="form-label">
-          Email address
-        </label>
-        <input id="email" type="email" className={getClassNames('email')} {...register('email')} />
-        <ErrorMessage>{errors.email?.message}</ErrorMessage>
-      </div>
-
-      {/** Full name */}
-      <div className="mb-3">
-        <label htmlFor="fullName" className="form-label">
-          Full name
-        </label>
-        <input
-          id="fullName"
-          type="text"
-          className={getClassNames('fullName')}
-          {...register('fullName')}
-        />
-        <ErrorMessage>{errors.fullName?.message}</ErrorMessage>
-      </div>
-
+      <Form.Group controlId="email" className="mb-3">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control type="email" isInvalid={Boolean(errors.email)} {...register('email')} />
+        <Form.Text className="invalid-feedback">{errors.email?.message}</Form.Text>
+      </Form.Group>
       {/** Password */}
-      <div className="mb-3">
-        <label htmlFor="password" className="form-label">
-          Password
-        </label>
-        <input
-          id="password"
+      <Form.Group controlId="password" className="mb-3">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
           type="password"
-          className={getClassNames('password')}
+          isInvalid={Boolean(errors.password)}
           {...register('password')}
         />
-        <ErrorMessage>{errors.password?.message}</ErrorMessage>
-      </div>
-
+        <Form.Text className="invalid-feedback">{errors.password?.message}</Form.Text>
+      </Form.Group>
       {/** Password Confirmation */}
-      <div className="mb-3">
-        <label htmlFor="confirmPassword" className="form-label">
-          Confirm password
-        </label>
-        <input
-          id="confirmPassword"
+      <Form.Group controlId="passwordConfirm" className="mb-3">
+        <Form.Label>Confirm password</Form.Label>
+        <Form.Control
           type="password"
-          className={getClassNames('passwordConfirm')}
+          isInvalid={Boolean(errors.passwordConfirm)}
           {...register('passwordConfirm')}
         />
-        <ErrorMessage>{errors.passwordConfirm?.message}</ErrorMessage>
-      </div>
-
-      {/** Remember me */}
-      <div className="mb-3 form-check">
-        <input
-          id="acceptLegal"
+        <Form.Text className="invalid-feedback">{errors.passwordConfirm?.message}</Form.Text>
+      </Form.Group>
+      {/* Favorite Ice Cream */}
+      <Form.Group controlId="favoriteIceCream" className="mb-3">
+        <Form.Label>Favorite ice cream</Form.Label>
+        <Controller
+          name="favoriteIceCream" // equivalent to register('favoriteIceCream')
+          control={control}
+          render={({ field }) => <Select {...field} options={iceCreamOptions} />}
+        />
+      </Form.Group>
+      {/** Accept terms & conditions */}
+      <Form.Group controlId="acceptLegal" className="mb-3">
+        <Form.Check
           type="checkbox"
-          className={cn('form-check-input', { 'is-invalid': Boolean(errors.acceptLegal) })}
+          isInvalid={Boolean(errors.acceptLegal)}
+          feedback={errors.acceptLegal?.message}
+          label={
+            <>
+              I accept the <a href="#">Terms & Conditions</a>
+            </>
+          }
           {...register('acceptLegal')}
         />
-        <label className="form-check-label" htmlFor="acceptLegal">
-          I accept the <a href="#">Terms & Conditions</a>
-        </label>
-        <ErrorMessage>{errors.acceptLegal?.message}</ErrorMessage>
-      </div>
+      </Form.Group>
 
       {/** Submit button */}
-      <button type="submit" className="btn btn-primary w-100 mb-3">
+      <Button variant="primary" type="submit" className="w-100 mb-3">
         Register
-      </button>
-
+      </Button>
       <Link to="/">Already have an account ? Login</Link>
-    </form>
+    </Form>
   )
 }

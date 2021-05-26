@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
@@ -17,6 +17,7 @@ export default function App() {
           <Switch>
             <Route path="/" exact component={LoginForm} />
             <Route path="/register" exact component={RegisterForm} />
+            <Redirect to="/" />
           </Switch>
         </Router>
       </div>
