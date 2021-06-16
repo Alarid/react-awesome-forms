@@ -54,7 +54,6 @@ export default function RegisterForm() {
     const { passwordConfirm, acceptLegal, ...rest } = data
     console.log(rest) // you would only send what's in rest to your backend
   }
-  console.log(errors.acceptLegal?.message)
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} noValidate>

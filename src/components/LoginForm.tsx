@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -31,14 +31,11 @@ export default function LoginForm() {
   // We get some utilities & state in return
   const {
     register, // you need this to register your inputs
-    handleSubmit, // this is a wrapper for you onSubmit handler
+    handleSubmit, // this is a wrapper for your onSubmit handler
     formState: { errors }, // we get our form's state, especially the errors
   } = useForm<FormValues>({ resolver: yupResolver(schema) })
 
-  // Form submit handler
-  function onSubmit(data: FormValues) {
-    console.log(data)
-  }
+  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data)
 
   return (
     /**
